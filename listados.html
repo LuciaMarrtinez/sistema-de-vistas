@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Listados | Hotel Booking</title>
+
+    <link rel="stylesheet" href="style.css">
+    <script src="listados.js" defer></script>
+</head>
+<body>
+
+    <header class="navbar">
+        <nav class="nav-links">
+            <a href="index.html" class="nav-link">Inicio</a>
+            <a href="estadisticas.html" class="nav-link">Estadísticas</a>
+            <a href="listados.html" class="nav-link active">Listados</a>
+            <a href="reservas.html" class="nav-link">Reservas</a>
+            <a href="clientes.html" class="nav-link">Clientes</a>
+            <a href="habitaciones.html" class="nav-link">Habitaciones</a>
+        </nav>
+    </header>
+
+    <main class="container">
+
+        <section class="welcome">
+            <h1>Listados</h1>
+            <p>
+                Generá consultas para analizar la información
+                de las reservas del hotel.
+            </p>
+        </section>
+
+        <section class="card report-search">
+
+            <h2>Generar listado</h2>
+
+            <p class="search-description">
+                Seleccioná el tipo de información que querés consultar.
+            </p>
+
+            <form id="report-form">
+
+                <div class="filter-field">
+                    <label for="report-type">Tipo de listado</label>
+
+                    <select id="report-type" name="tipo" required>
+                        <option value="">Seleccioná un listado</option>
+                        <option value="periodo">Reservas por período</option>
+                        <option value="canceladas">Reservas canceladas</option>
+                        <option value="habitaciones">Reservas por tipo de habitación</option>
+                        <option value="clientes">Clientes y sus reservas</option>
+                    </select>
+                </div>
+
+                <div id="report-filters"></div>
+
+                <div class="search-actions">
+                    <button type="submit">Generar listado</button>
+
+                    <button
+                        type="button"
+                        id="clear-report"
+                        class="secondary-button"
+                    >
+                        Limpiar
+                    </button>
+                </div>
+
+            </form>
+
+        </section>
+
+        <section class="card report-results">
+
+            <div class="results-header">
+                <div>
+                    <h2>Resultados</h2>
+                    <p id="report-description">
+                        Seleccioná un listado para consultar sus resultados.
+                    </p>
+                </div>
+
+                <span id="report-count" class="results-count">
+                    0 resultados
+                </span>
+            </div>
+
+            <div class="table-container">
+                <table class="data-table">
+
+                    <thead id="report-table-head">
+                        <tr>
+                            <th>Resultados del listado</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="report-table-body">
+                        <tr>
+                            <td class="empty-message">
+                                Los resultados aparecerán al conectar el backend.
+                            </td>
+                        </tr>
+                    </tbody>
+
+                </table>
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+</html>

@@ -79,15 +79,50 @@ filterButtons.forEach(button => {
 searchForm.addEventListener("submit", event => {
     event.preventDefault();
 
-    alert(
-        "Elegiste buscar por: " +
-        ({
-            cliente: "nombre o apellido",
-            fecha: "fecha de llegada",
-            estado: "estado de cancelación"
-        }[currentFilter]) +
-        ". En el próximo paso programaremos los resultados."
-    );
+    if (currentFilter === "cliente") {
+        const nombre = document
+            .getElementById("search-name")
+            .value.trim();
+
+        const apellido = document
+            .getElementById("search-surname")
+            .value.trim();
+
+        if (nombre === "" && apellido === "") {
+            alert("Ingresá un nombre, un apellido o ambos.");
+            return;
+        }
+
+        alert(
+            "Criterios de búsqueda:\n" +
+            "Nombre: " + (nombre || "Sin especificar") + "\n" +
+            "Apellido: " + (apellido || "Sin especificar") +
+            "\n\nLa búsqueda se conectará al backend."
+        );
+    }
+
+    if (currentFilter === "fecha") {
+        const fecha = document.getElementById("search-date").value;
+
+        if (fecha === "") {
+            alert("Seleccioná una fecha de llegada.");
+            return;
+        }
+
+        alert(
+            "Fecha seleccionada: " + fecha +
+            "\nLa búsqueda se conectará al backend."
+        );
+    }
+
+    if (currentFilter === "estado") {
+        const estado = document.getElementById("search-status").value;
+
+        alert(
+            "Estado seleccionado: " + estado +
+            "\nLa búsqueda se conectará al backend."
+        );
+    }
 });
 
 // Limpiar el campo actual

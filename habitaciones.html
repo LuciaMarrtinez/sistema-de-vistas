@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Habitaciones | Hotel Booking</title>
+
+    <link rel="stylesheet" href="style.css">
+    <script src="habitaciones.js" defer></script>
+</head>
+<body>
+
+    <header class="navbar">
+        <nav class="nav-links">
+            <a href="index.html" class="nav-link">Inicio</a>
+            <a href="estadisticas.html" class="nav-link">Estadísticas</a>
+            <a href="listados.html" class="nav-link">Listados</a>
+            <a href="reservas.html" class="nav-link">Reservas</a>
+            <a href="clientes.html" class="nav-link">Clientes</a>
+            <a href="habitaciones.html" class="nav-link active">Habitaciones</a>
+        </nav>
+    </header>
+
+    <main class="container">
+
+        <section class="welcome">
+            <h1>Habitaciones</h1>
+            <p>
+                Consultá los tipos de habitación solicitados y asignados
+                en las reservas.
+            </p>
+        </section>
+
+        <section class="card room-search">
+            <h2>Buscar habitaciones</h2>
+
+            <p class="search-description">
+                Filtrá la información por tipo de habitación.
+            </p>
+
+            <form id="room-search-form">
+
+                <div class="filter-field">
+                    <label for="room-type">Tipo de habitación</label>
+
+                    <select id="room-type" name="tipo">
+                        <option value="">Todos los tipos</option>
+                    </select>
+                </div>
+
+                <div class="search-actions">
+                    <button type="submit">Buscar</button>
+
+                    <button
+                        type="button"
+                        id="clear-room-search"
+                        class="secondary-button"
+                    >
+                        Limpiar
+                    </button>
+                </div>
+
+            </form>
+        </section>
+
+        <section class="card room-results">
+
+            <div class="results-header">
+                <div>
+                    <h2>Tipos de habitación</h2>
+                    <p>
+                        Consultá los tipos solicitados y asignados
+                        en las reservas.
+                    </p>
+                </div>
+
+                <span id="room-count" class="results-count">
+                    0 tipos
+                </span>
+            </div>
+
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Tipo de habitación</th>
+                            <th>Reservas solicitadas</th>
+                            <th>Reservas asignadas</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="room-table-body">
+                        <tr>
+                            <td colspan="3" class="empty-message">
+                                Conectá el sistema para consultar los datos.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+</html>
