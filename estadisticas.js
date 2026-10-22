@@ -1,118 +1,174 @@
-// 1. Gráfico de hoteles más elegidos
-const ctxHotels = document.getElementById("chart-hotels");
+const API = "http://127.0.0.1:5000";
 
-new Chart(ctxHotels, {
-    type: "bar",
-    data: {
-        labels: ["City Hotel", "Resort Hotel"],
-        datasets: [{
-            label: "Reservas",
-            data: [79330, 40060],
-            backgroundColor: ["#b9a5c9", "#9bc9b0"],
-            borderRadius: 6
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { display: false }
+// Obtener los datos de una ruta del backend
+async function obtenerDatos(ruta) {
+    const respuesta = await fetch(API + ruta);
+
+    if (!respuesta.ok) {
+        throw new Error("Error al consultar " + ruta);
+    }
+
+    return await respuesta.json();
+}
+// Crear un gráfico con datos reales
+function crearGrafico(id, tipo, etiquetas, valores, titulo, horizontal = false) {
+    const canvas = document.getElementById(id);
+
+    if (!canvas) {
+        console.warn(`No se encontró el canvas: ${id}`);
+        return;
+    }
+
+    new Chart(canvas, {
+        type: tipo,
+        data: {
+            labels: etiquetas,
+            datasets: [{
+                label: titulo,
+                data: valores,
+                borderWidth: 1
+            }]
         },
-        scales: {
-            y: { beginAtZero: true }
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: horizontal ? "y" : "x",
+            plugins: {
+                legend: {
+                    display: tipo === "pie" || tipo === "doughnut"
+                }
+            },
+            scales: (tipo === "pie" || tipo === "doughnut")
+                ? {}
+                : {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
         }
-    }
-});
+    });
+}
 
+// Cargar todos los gráficos
+async function cargarEstadisticas() {
+    try {
+        const [
+            hoteles,
+            paises,
+            habitaciones,
+            segmentos,
+            dias,
+            cancelaciones,
+            noches,
+            comidas,
+            cumplimiento
+        ] = await Promise.all([
+            obtenerDatos("/estadisticas/hoteles"),
+            obtenerDatos("/estadisticas/paises"),
+            obtenerDatos("/estadisticas/habitaciones"),
+            obtenerDatos("/estadisticas/segmentos"),
+            obtenerDatos("/estadisticas/dias"),
+            obtenerDatos("/estadisticas/cancelaciones"),
+            obtenerDatos("/estadisticas/noches"),
+            obtenerDatos("/estadisticas/comida"),
+            obtenerDatos("/estadisticas/cumplio-habitaciones")
+        ]);
 
-// 2. Gráfico de países de origen
-const ctxCountries = document.getElementById("chart-countries");
+        // 1. Hoteles más elegidos
+        crearGrafico(
+            "chart-hotels",
+            "bar",
+            hoteles.map(d => d.hotel),
+            hoteles.map(d => Number(d.total)),
+            "Cantidad de reservas",
+            true
+        );
 
-new Chart(ctxCountries, {
-    type: "doughnut",
-    data: {
-        labels: ["Portugal", "Reino Unido", "Francia", "España", "Otros"],
-        datasets: [{
-            label: "Reservas",
-            data: [485, 1213, 1042, 856, 3000],
-            backgroundColor: [
-                "#b9a5c9",
-                "#9bc9b0",
-                "#e8a6ad",
-                "#e7c99b",
-                "#a9c5dc"
+        // 2. Países de origen
+        crearGrafico(
+            "chart-countries",
+            "bar",
+            paises.map(d => d.pais),
+            paises.map(d => Number(d.total)),
+            "Cantidad de reservas",
+            true
+        );
+
+        // 3. Tipos de habitación solicitados
+        crearGrafico(
+            "chart-rooms",
+            "bar",
+            habitaciones.map(d => d.habitacion),
+            habitaciones.map(d => Number(d.total)),
+            "Cantidad de reservas"
+        );
+
+        // 4. Segmentos de mercado
+        crearGrafico(
+            "chart-segments",
+            "doughnut",
+            segmentos.map(d => d.segmento),
+            segmentos.map(d => Number(d.total)),
+            "Reservas por segmento"
+        );
+
+        // 5. Días de llegada más elegidos
+        crearGrafico(
+            "chart-dias",
+            "bar",
+            dias.map(d => d.dia),
+            dias.map(d => Number(d.total)),
+            "Cantidad de reservas"
+        );
+
+        // 6. Reservas canceladas y no canceladas
+        crearGrafico(
+            "chart-cancelaciones",
+            "doughnut",
+            cancelaciones.map(d => d.estado),
+            cancelaciones.map(d => Number(d.total)),
+            "Estado de las reservas"
+        );
+
+        // 7. Comparación entre noches de semana y de fin de semana
+        const datosNoches = noches[0];
+
+        crearGrafico(
+            "chart-noches",
+            "bar",
+            ["Entre semana", "Fin de semana"],
+            [
+                Number(datosNoches.noches_semana),
+                Number(datosNoches.noches_finde)
             ],
-            borderWidth: 0
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { position: "bottom" }
-        }
+            "Total de noches"
+        );
+
+        // 8. Tipos de comida
+        crearGrafico(
+            "chart-comida",
+            "doughnut",
+            comidas.map(d => d.comida),
+            comidas.map(d => Number(d.total)),
+            "Reservas por tipo de comida"
+        );
+
+        // 9. Habitaciones solicitadas y recibidas
+        crearGrafico(
+            "chart-cumplimiento",
+            "doughnut",
+            cumplimiento.map(d => d.resultado),
+            cumplimiento.map(d => Number(d.total)),
+            "Cantidad de reservas"
+        );
+
+    } catch (error) {
+        console.error("No se pudieron cargar las estadísticas:", error);
+        alert(
+            "No se pudieron cargar los gráficos. " +
+            "Verificá que Flask esté funcionando y revisá la consola."
+        );
     }
-});
+}
 
-
-// 3. Gráfico de tipos de habitación
-const ctxRooms = document.getElementById("chart-rooms");
-
-new Chart(ctxRooms, {
-    type: "bar",
-    data: {
-        labels: ["A", "D", "E", "F", "G", "Otros"],
-        datasets: [{
-            label: "Reservas",
-            data: [1500, 2000, 900, 700, 600, 1200],
-            backgroundColor: "#b9a5c9",
-            borderRadius: 6
-        }]
-    },
-    options: {
-        indexAxis: "y",
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { display: false }
-        },
-        scales: {
-            x: { beginAtZero: true }
-        }
-    }
-});
-
-
-// 4. Gráfico de segmentos de mercado
-const ctxSegments = document.getElementById("chart-segments");
-
-new Chart(ctxSegments, {
-    type: "pie",
-    data: {
-        labels: [
-            "Online TA",
-            "Offline TA/TO",
-            "Direct",
-            "Corporate",
-            "Otros"
-        ],
-        datasets: [{
-            data: [5000, 2500, 1200, 700, 600],
-            backgroundColor: [
-                "#b9a5c9",
-                "#9bc9b0",
-                "#e8a6ad",
-                "#e7c99b",
-                "#a9c5dc"
-            ],
-            borderWidth: 0
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { position: "bottom" }
-        }
-    }
-});
+document.addEventListener("DOMContentLoaded", cargarEstadisticas);

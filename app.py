@@ -65,12 +65,12 @@ def listar_reservas():
         parametros = []
 
         if nombre:
-         consulta += " AND c.Nombre LIKE %s"
-         parametros.append(f"%{nombre}%")
+         consulta += " AND c.Nombre = %s"
+         parametros.append(nombre)
 
         if apellido:
-         consulta += " AND c.Apellido LIKE %s"
-         parametros.append(f"%{apellido}%")
+         consulta += " AND c.Apellido = %s"
+         parametros.append(apellido)
 
         if fecha:
             anio, mes, dia = fecha.split("-")
@@ -385,8 +385,8 @@ def listar_cumpliohabestadisticas():
     conexion = conectar()
     with conexion.cursor() as cursor:
         cursor.execute("""
-            SELECT CASE WHEN rsv_hab_r = rsv_hab_a THEN 'Misma habitación'
-                        ELSE 'Habitación distinta' END AS resultado,
+            SELECT CASE WHEN rsv_hab_r = rsv_hab_a THEN 'Misma habitacion'
+                        ELSE 'Habitacion distinta' END AS resultado,
                 COUNT(*) AS total
             FROM reserva
             GROUP BY resultado
@@ -410,6 +410,96 @@ def listar_compahabestadisticas():
         datos = cursor.fetchall()
     conexion.close()
     return jsonify (datos)
+
+# Estadísticas de reservas por día de la semana
+@app.route("/estadisticas/dias")
+def estadisticas_dias():
+    conexion = conectar()
+
+    try:
+        with conexion.cursor() as cursor:
+            sql = """
+                SELECT
+                    CASE DAYOFWEEK(
+                        STR_TO_DATE(
+                            CONCAT(
+                                Anio_llegada, '-',
+                                Mes_llegada, '-',
+                                Dia_llegada
+                            ),
+                            '%Y-%M-%d'
+                        )
+                    )
+                        WHEN 2 THEN 'Lunes'
+                        WHEN 3 THEN 'Martes'
+                        WHEN 4 THEN 'Miercoles'
+                        WHEN 5 THEN 'Jueves'
+                        WHEN 6 THEN 'Viernes'
+                        WHEN 7 THEN 'Sabado'
+                        WHEN 1 THEN 'Domingo'
+                    END AS dia,
+                    COUNT(*) AS total
+                FROM reserva
+                GROUP BY DAYOFWEEK(
+                    STR_TO_DATE(
+                        CONCAT(
+                            Anio_llegada, '-',
+                            Mes_llegada, '-',
+                            Dia_llegada
+                        ),
+                        '%Y-%M-%d'
+                    )
+                )
+                ORDER BY DAYOFWEEK(
+                    STR_TO_DATE(
+                        CONCAT(
+                            Anio_llegada, '-',
+                            Mes_llegada, '-',
+                            Dia_llegada
+                        ),
+                        '%Y-%M-%d'
+                    )
+                )
+            """
+
+            cursor.execute(sql)
+            datos = cursor.fetchall()
+
+        return jsonify(datos)
+
+    finally:
+        conexion.close()
+
+
+# Estadísticas de reservas canceladas y no canceladas
+@app.route("/estadisticas/cancelaciones")
+def estadisticas_cancelaciones():
+    conexion = conectar()
+
+    try:
+        with conexion.cursor() as cursor:
+            sql = """
+                SELECT
+                    CASE
+                        WHEN Cancelado = 1 THEN 'Canceladas'
+                        ELSE 'No canceladas'
+                    END AS estado,
+                    COUNT(*) AS total
+                FROM reserva
+                GROUP BY
+                    CASE
+                        WHEN Cancelado = 1 THEN 'Canceladas'
+                        ELSE 'No canceladas'
+                    END
+            """
+
+            cursor.execute(sql)
+            datos = cursor.fetchall()
+
+        return jsonify(datos)
+
+    finally:
+        conexion.close()
 
 # BUSCAR HOTEL: Permite buscar el hotel por nombre y ver sus reservaciones
 
