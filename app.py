@@ -575,8 +575,8 @@ def buscar_rango():
     return jsonify(datos)
 
 
-# BUSCAR POR TIPO DE HABITACIÓN: se busca por letra y devuelve la habitacion asignada o reservada.
-# ejemplo de uso: http://127.0.0.1:5000/buscar/habitacion?tipo=A
+#  se busca por letra y devuelve la habitacion asignada o reservada.
+
 
 @app.route("/buscar/habitacion")
 def buscar_habitacion():
@@ -600,6 +600,73 @@ def buscar_habitacion():
         datos = cursor.fetchall()
     conexion.close()
     return jsonify(datos)
+
+        # Cancel por hotel
+@app.route("/listados/cancelaciones-hotel")
+def listado_cancelaciones_hotel():
+    conexion = conectar()
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("""
+                SELECT hotel, total_canceladas
+                FROM vista_cancelaciones_hotel
+                ORDER BY total_canceladas DESC
+            """)
+            datos = cursor.fetchall()
+        return jsonify(datos)
+    finally:
+        conexion.close()
+
+
+# Estadías de cinco noches o más
+@app.route("/listados/estadias-largas")
+def listado_estadias_largas():
+    conexion = conectar()
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("""
+                SELECT cod_reserva, mes_llegada, anio_llegada,
+                       noche_finde, noche_semana, total_noches
+                FROM vista_estadias_largas
+                ORDER BY total_noches DESC
+            """)
+            datos = cursor.fetchall()
+        return jsonify(datos)
+    finally:
+        conexion.close()
+
+
+@app.route("/listados/reservas-mes")
+def listado_reservas_mes():
+    conexion = conectar()
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("""
+                SELECT anio_llegada, mes_llegada, cantidad_reservas
+                FROM vista_reservas_por_mes
+                ORDER BY anio_llegada, mes_llegada
+            """)
+            datos = cursor.fetchall()
+        return jsonify(datos)
+    finally:
+        conexion.close()
+
+
+@app.route("/listados/adr-alto")
+def listado_adr_alto():
+    conexion = conectar()
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("""
+                SELECT cod_reserva, adr, adultos, ninios,
+                       mes_llegada, anio_llegada
+                FROM vista_reservas_adr_alto
+                ORDER BY adr DESC
+            """)
+            datos = cursor.fetchall()
+        return jsonify(datos)
+    finally:
+        conexion.close()
 
 if __name__ == "__main__":
     app.run(debug=True)

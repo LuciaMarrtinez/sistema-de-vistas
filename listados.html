@@ -44,13 +44,22 @@
 
                 <div class="filter-field">
                     <label for="report-type">Tipo de listado</label>
+                     <select id="report-type" name="tipo" required>
+                      <option value="">Seleccioná un listado</option>
 
-                    <select id="report-type" name="tipo" required>
-                        <option value="">Seleccioná un listado</option>
-                        <option value="periodo">Reservas por período</option>
-                        <option value="canceladas">Reservas canceladas</option>
-                        <option value="habitaciones">Reservas por tipo de habitación</option>
-                        <option value="clientes">Clientes y sus reservas</option>
+                       <optgroup label="Búsquedas personalizadas">
+                          <option value="periodo">Reservas por período</option>
+                          <option value="canceladas">Reservas canceladas</option>
+                          <option value="habitaciones">Reservas por tipo de habitación</option>
+                          <option value="clientes">Clientes y sus reservas</option>
+                       </optgroup>
+
+                        <optgroup label="Vistas de la base de datos">
+                          <option value="vista_cancelaciones">Cancelaciones por hotel</option>
+                          <option value="vista_estadias">Estadías de 5 noches o más</option>
+                          <option value="vista_meses">Reservas por mes</option>
+                          <option value="vista_adr">Reservas con ADR superior a 100</option>
+                        </optgroup>
                     </select>
                 </div>
 
