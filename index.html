@@ -6,6 +6,7 @@
     <title>SISTEMA HOTEL</title>
     <link rel="stylesheet" href="style.css">
     <script src="java.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     
@@ -15,34 +16,37 @@
         <nav class="nav-links">
             <a href="index.html" class="nav-links active"> INICIO
             </a>
-            <a href="index.html" class="nav-link"> ESTADISTICAS</a>
+            <a href="estadisticas.html" class="nav-link"> ESTADISTICAS</a>
             <a href="index.html" class="nav-link"> LISTADOS</a>
-            <a href="index.html" class="nav-link"> RESEERVAS</a>
+            <a href="reservas.html" class="nav-link"> RESEERVAS</a>
             <a href="index.html" class="nav-link"> CLIENTES</a>
             <a href="index.html" class="nav-link"> HABITACIONES</a>
         </nav>
     </header>
 
     <main class="container">
-        <section class="BIENVENIDO">
-            <h1>BIENVENIDO</h1>
-            <p>General</p>
+        <section class="welcome">
+          <span class="welcome-label"></span>
+          <h1>HOTEL BOOKING</h1>
+          <p>Lo mas consultado ultimamente</p>
         </section>
 
         <section class="dashboard">
             <article class="card">
                 <h2>DIAS MAS ELEGIDOS</h2>
                 <P>Dias mas concurrido de la semana</P>
-                <div id="chart-days" class="chart-placeholder"> grafico reserva</div>
+                <div class="chart-container">
+                    <canvas id="chart-dias"></canvas>
+                </div>
             </article>
 
             <article class="card">
                 <H2>Estados reservas</H2>
                 <P>Porcentaje de reservas canceladas y no canceladas</P>
-                <div id="chart-cancellations" class="chart-placeholder">
-                    grafico de cancelaciones
+                <div class="chart-container">
+                    <canvas id="chart-cancelaciones"></canvas>
                 </div>
-            </article>
+            </article>ss
         </section>
 
     </main>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reservas | Hotel Booking</title>
+
+    <link rel="stylesheet" href="style.css">
+    <script src="reservas.js" defer></script>
+</head>
+<body>
+
+    <header class="navbar">
+        <a href="index.html" class="logo">
+            🏨 Hotel Booking
+        </a>
+
+        <nav class="nav-links">
+            <a href="index.html" class="nav-link">Inicio</a>
+            <a href="estadisticas.html" class="nav-link">Estadísticas</a>
+            <a href="listados.html" class="nav-link">Listados</a>
+            <a href="reservas.html" class="nav-link active">Reservas</a>
+            <a href="clientes.html" class="nav-link">Clientes</a>
+            <a href="habitaciones.html" class="nav-link">Habitaciones</a>
+        </nav>
+    </header>
+
+    <main class="container">
+
+        <section class="welcome">
+            <span class="welcome-label">GESTIÓN HOTELERA</span>
+            <h1>Reservas</h1>
+            <p>Consultá y filtrá las reservas registradas en el sistema.</p>
+        </section>
+
+            <h2>Buscar reservas</h2>
+    <p class="search-description"> </p>
+
+    <div class="search-options">
+        <button type="button" class="search-option active"
+                data-filter="cliente">
+            <span>♙</span> Cliente
+        </button>
+
+        <button type="button" class="search-option"
+                data-filter="fecha">
+            <span>▦</span> Fecha
+        </button>
+
+        <button type="button" class="search-option"
+                data-filter="estado">
+            <span>☷</span> Estado
+        </button>
+    </div>
+
+    <form id="reservation-search-form">
+        <div id="filter-fields">
+
+            <div class="filter-field">
+                <label for="search-client">
+                    Nombre o apellido del cliente
+                </label>
+            </div>
+
+        </div>
+
+            <div class="search-actions">
+                <button type="submit">Buscar</button>
+
+                <button type="button" id="clear-button"
+                    class="secondary-button">
+                  Limpiar
+                </button>
+            </div>
+            </form>
+        </section>
+        <section class="card reservation-results">
+            <div class="results-header">
+                <div>
+                    <h2>Listado de reservas</h2>
+                    <p>Seleccioná una reserva para consultar sus detalles.</p>
+                </div>
+
+                <span id="reservation-count" class="results-count">
+                    0 reservas
+                </span>
+            </div>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Cliente</th>
+                        <th>Hotel</th>
+                        <th>Llegada</th>
+                        <th>Habitación</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+
+                <tbody id="reservation-table-body">
+                    <tr>
+                        <td colspan="6" class="empty-message">
+                            Próximamente se mostrarán las reservas.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+    </main>
+
+</body>
+</html>

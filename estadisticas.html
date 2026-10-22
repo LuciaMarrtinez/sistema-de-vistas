@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Estadísticas | Hotel Booking</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="estadisticas.js" defer></script>
+</head>
+<body>
+
+    <header class="navbar">
+        <a href="index.html" class="logo">
+            🏨 Hotel Booking
+        </a>
+
+        <nav class="nav-links">
+            <a href="index.html" class="nav-link">Inicio</a>
+            <a href="estadisticas.html" class="nav-link active">Estadísticas</a>
+            <a href="listados.html" class="nav-link">Listados</a>
+            <a href="reservas.html" class="nav-link">Reservas</a>
+            <a href="clientes.html" class="nav-link">Clientes</a>
+            <a href="habitaciones.html" class="nav-link">Habitaciones</a>
+        </nav>
+    </header>
+
+    <main class="container">
+
+        <section class="welcome">
+            <span class="welcome-label">ANÁLISIS DE DATOS</span>
+            <h1>Estadísticas</h1>
+        </section>
+
+        <section class="statistics-grid">
+
+            <article class="card">
+                <h2>Hoteles más elegidos</h2>
+                <p>Cantidad de reservas por tipo de hotel.</p>
+                <div class="chart-container">
+                    <canvas id="chart-hotels"></canvas>
+                </div>
+            </article>
+
+            <article class="card">
+                <h2>Países de origen</h2>
+                <p>Distribución de los huéspedes según su país.</p>
+                <div class="chart-container">
+                    <canvas id="chart-countries"></canvas>
+                </div>
+            </article>
+
+            <article class="card">
+                <h2>Tipos de habitación</h2>
+                <p>Habitaciones reservadas con mayor frecuencia.</p>
+                <div class="chart-container">
+                    <canvas id="chart-rooms"></canvas>
+                </div>
+            </article>
+
+            <article class="card">
+                <h2>Segmentos de mercado</h2>
+                <p>Distribución de las reservas según su segmento.</p>
+                <div class="chart-container">
+                    <canvas id="chart-segments"></canvas>
+                </div>
+            </article>
+
+        </section>
+
+    </main>
+
+</body>
+</html>
