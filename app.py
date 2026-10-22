@@ -32,13 +32,76 @@ def listar_paises():
 
 @app.route("/reservas")
 def listar_reservas():
-    conexion=conectar()
-    with conexion.cursor() as cursor:
-        cursor.execute("SELECT cod_reserva, anio_llegada, mes_llegada, " \
-        "noche_finde, noche_semana, adultos, cancelado FROM reserva LIMIT 20")
-        datos = cursor.fetchall()
-    conexion.close()
-    return jsonify(datos)
+    conexion = conectar()
+
+    try:
+        nombre = request.args.get("nombre", "").strip()
+        apellido = request.args.get("apellido", "").strip()
+        fecha = request.args.get("fecha", "").strip()
+        estado = request.args.get("estado", "").strip()
+
+        consulta = """
+            SELECT
+                r.Cod_reserva AS codigo,
+                CONCAT(c.Nombre, ' ', c.Apellido) AS cliente,
+                h.Nombre AS hotel,
+                CONCAT(
+                    r.Dia_llegada, '/',
+                    r.Mes_llegada, '/',
+                    r.Anio_llegada
+                ) AS llegada,
+                th.Descrip AS habitacion,
+                r.Cancelado AS cancelado
+            FROM reserva r
+            INNER JOIN cliente c
+                ON r.Rsv_cliente = c.Cod_cliente
+            INNER JOIN hotel h
+                ON r.Rsv_hotel = h.Cod_hotel
+            LEFT JOIN tipo_habitacion th
+                ON r.Rsv_hab_a = th.Cod_habitacion
+            WHERE 1=1
+        """
+
+        parametros = []
+
+        if nombre:
+         consulta += " AND c.Nombre LIKE %s"
+         parametros.append(f"%{nombre}%")
+
+        if apellido:
+         consulta += " AND c.Apellido LIKE %s"
+         parametros.append(f"%{apellido}%")
+
+        if fecha:
+            anio, mes, dia = fecha.split("-")
+            meses = [
+                "January", "February", "March", "April",
+                "May", "June", "July", "August",
+                "September", "October", "November", "December"
+            ]
+
+            consulta += """
+                AND r.Anio_llegada = %s
+                AND r.Mes_llegada = %s
+                AND r.Dia_llegada = %s
+            """
+            parametros.extend([int(anio), meses[int(mes) - 1], int(dia)])
+
+        if estado == "cancelada":
+            consulta += " AND r.Cancelado = 1"
+        elif estado == "activa":
+            consulta += " AND r.Cancelado = 0"
+
+        consulta += " ORDER BY r.Anio_llegada DESC, r.Cod_reserva DESC LIMIT 100"
+
+        with conexion.cursor() as cursor:
+            cursor.execute(consulta, parametros)
+            datos = cursor.fetchall()
+
+        return jsonify(datos)
+
+    finally:
+        conexion.close()
 
 @app.route("/hoteles")
 def listar_hoteles():
@@ -114,12 +177,41 @@ def listar_tipoclientes():
 
 @app.route("/clientes")
 def listar_clientes():
-    conexion=conectar()
-    with conexion.cursor() as cursor:
-        cursor.execute("SELECT cod_cliente, nombre, apellido FROM cliente LIMIT 30")
-        datos = cursor.fetchall()
-    conexion.close()
-    return jsonify(datos)
+    conexion = conectar()
+
+    try:
+        nombre = request.args.get("nombre", "").strip()
+        apellido = request.args.get("apellido", "").strip()
+
+        consulta = """
+            SELECT cod_cliente, nombre, apellido, num_tel, email
+            FROM cliente
+        """
+
+        condiciones = []
+        parametros = []
+
+        if nombre:
+            condiciones.append("nombre = %s")
+            parametros.append(nombre)
+
+        if apellido:
+            condiciones.append("apellido = %s")
+            parametros.append(apellido)
+
+        if condiciones:
+            consulta += " WHERE " + " AND ".join(condiciones)
+        else:
+            consulta += " LIMIT 30"
+
+        with conexion.cursor() as cursor:
+            cursor.execute(consulta, parametros)
+            datos = cursor.fetchall()
+
+        return jsonify(datos)
+
+    finally:
+        conexion.close()
 
 # consultas complicadas ay que miedo
 

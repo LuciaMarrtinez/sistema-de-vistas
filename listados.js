@@ -69,7 +69,7 @@ reportForm.addEventListener("submit", event => {
         }
     }
 
-    // La consulta real se realizará al conectar el backend.
+
 });
 
 clearReport.addEventListener("click", () => {
