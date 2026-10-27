@@ -31,12 +31,14 @@ function showFilter(filter) {
                            placeholder="Ingresá el apellido">
                 </div>
             </div>`;
-    } else if (filter === "fecha") {
+     } else if (filter === "fecha") {
         filterFields.innerHTML = `
             <div class="filter-field">
                 <label for="search-date">Fecha de llegada</label>
                 <input type="date" id="search-date">
             </div>`;
+
+        limitarFechaReserva();
     } else if (filter === "estado") {
         filterFields.innerHTML = `
             <div class="filter-field">
@@ -164,3 +166,34 @@ clearButton.addEventListener("click", () => {
 });
 
 showFilter("cliente");
+
+
+async function limitarFechaReserva() {
+    const fecha = document.getElementById("search-date");
+
+    if (!fecha) return;
+
+    try {
+        const respuesta = await fetch(
+            "http://127.0.0.1:5000/listados/rango-fechas"
+        );
+
+        if (!respuesta.ok) {
+            throw new Error("No se pudieron obtener las fechas");
+        }
+
+        const rango = await respuesta.json();
+
+        if (!rango.fecha_minima || !rango.fecha_maxima) {
+            fecha.disabled = true;
+            alert("No hay fechas registradas en la base de datos.");
+            return;
+        }
+
+        fecha.min = rango.fecha_minima;
+        fecha.max = rango.fecha_maxima;
+
+    } catch (error) {
+        console.error("Error al limitar las fechas:", error);
+    }
+}

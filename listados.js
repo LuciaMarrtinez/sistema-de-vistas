@@ -43,21 +43,69 @@ function showReportFilters() {
         descripciones[tipo] ||
         "Seleccioná un listado para consultar sus resultados.";
 
-    if (tipo === "periodo") {
-        reportFilters.innerHTML = `
-            <div class="report-date-fields">
-                <div class="filter-field">
-                    <label for="date-from">Fecha desde</label>
-                    <input type="date" id="date-from" required>
-                </div>
-                <div class="filter-field">
-                    <label for="date-to">Fecha hasta</label>
-                    <input type="date" id="date-to" required>
-                </div>
+    
+if (tipo === "periodo") {
+    reportFilters.innerHTML = `
+        <div class="report-date-fields">
+            <div class="filter-field">
+                <label for="date-from">Fecha desde</label>
+                <input type="date" id="date-from" required>
             </div>
-        `;
+            <div class="filter-field">
+                <label for="date-to">Fecha hasta</label>
+                <input type="date" id="date-to" required>
+            </div>
+        </div>
+    `;
+
+    cargarRangoFechas();
+}
+
+}
+
+async function cargarRangoFechas() {
+    const desde = document.getElementById("date-from");
+    const hasta = document.getElementById("date-to");
+
+    try {
+        const rango = await consultar("/listados/rango-fechas");
+
+        if (!rango.fecha_minima || !rango.fecha_maxima) {
+            alert("No hay fechas registradas en la base de datos.");
+            desde.disabled = true;
+            hasta.disabled = true;
+            return;
+        }
+
+        desde.min = rango.fecha_minima;
+        desde.max = rango.fecha_maxima;
+
+        hasta.min = rango.fecha_minima;
+        hasta.max = rango.fecha_maxima;
+
+        desde.addEventListener("change", () => {
+            hasta.min = desde.value || rango.fecha_minima;
+
+            if (hasta.value && hasta.value < hasta.min) {
+                hasta.value = "";
+            }
+        });
+
+        hasta.addEventListener("change", () => {
+            desde.max = hasta.value || rango.fecha_maxima;
+
+            if (desde.value && desde.value > desde.max) {
+                desde.value = "";
+            }
+        });
+
+    } catch (error) {
+        console.error("Error al obtener el rango de fechas:", error);
+        alert("No se pudieron cargar las fechas de la base de datos.");
     }
 }
+
+
 
 async function consultar(ruta) {
     const respuesta = await fetch(API + ruta);

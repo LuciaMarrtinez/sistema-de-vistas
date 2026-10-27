@@ -15,7 +15,7 @@
             <a href="index.html" class="nav-links active"> Inicio
             </a>
             <a href="estadisticas.html" class="nav-link"> Estadisticas</a>
-            <a href="li.html" class="nav-link"> Listados</a>
+            <a href="listados.html" class="nav-link"> Listados</a>
             <a href="reservas.html" class="nav-link"> Reservas</a>
             <a href="clientes.html" class="nav-link"> Cientes</a>
             <a href="habitaciones.html" class="nav-link"> Habitaciones</a>
@@ -28,25 +28,28 @@
           <h1>HOTEL BOOKING</h1>
           <p>Lo mas consultado ultimamente</p>
         </section>
+ <section class="dashboard summary-dashboard">
 
-        <section class="dashboard">
-            <article class="card">
-                <h2>DIAS MAS ELEGIDOS</h2>
-                <P>Dias mas concurrido de la semana</P>
-                <div class="chart-container">
-                    <canvas id="chart-dias"></canvas>
-                </div>
-            </article>
+        <article class="card summary-card">
+            <div class="summary-icon">▦</div>
+            <div>
+                <h2>Total de reservas</h2>
+                <p>Reservas registradas en el sistema</p>
+                <span id="total-reservas" class="summary-number">—</span>
+            </div>
+        </article>
 
-            <article class="card">
-                <H2>Estados reservas</H2>
-                <P>Porcentaje de reservas canceladas y no canceladas</P>
-                <div class="chart-container">
-                    <canvas id="chart-cancelaciones"></canvas>
-                </div>
-            </article>ss
-        </section>
+        <article class="card summary-card">
+            <div class="summary-icon">♙</div>
+            <div>
+                <h2>Total de clientes</h2>
+                <p>Clientes registrados en el sistema</p>
+                <span id="total-clientes" class="summary-number">—</span>
+            </div>
+        </article>
 
+    </section>
+    <p id="dashboard-message" class="dashboard-message"></p>
     </main>
 
 

@@ -1,77 +1,37 @@
+
 console.log("Hotel Booking iniciado correctamente");
 
-// 1. Gráfico de reservas por día de la semana
-const grfdias = document.getElementById("chart-dias");
+const API = "http://127.0.0.1:5000";
 
-new Chart(grfdias, {
-    type: "bar",
+async function cargarResumen() {
+    const reservasElemento = document.getElementById("total-reservas");
+    const clientesElemento = document.getElementById("total-clientes");
+    const mensaje = document.getElementById("dashboard-message");
 
-    data: {
-        labels: [
-            "Lunes",
-            "Martes",
-            "Miércoles",
-            "Jueves",
-            "Viernes",
-            "Sábado",
-            "Domingo"
-        ],
+    try {
+        const respuesta = await fetch(`${API}/inicio/resumen`);
 
-        datasets: [{
-            label: "Cantidad de reservas",
-            data: [120, 150, 135, 180, 210, 195, 160],
-            backgroundColor: "#b9a5c9",
-            borderRadius: 6
-        }]
-    },
-
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-
-        plugins: {
-            legend: {
-                display: false
-            }
-        },
-
-        scales: {
-            y: {
-                beginAtZero: true
-            }
+        if (!respuesta.ok) {
+            throw new Error(`Error HTTP: ${respuesta.status}`);
         }
+
+        const datos = await respuesta.json();
+
+        // Mostrar los totales que vienen desde la base de datos
+        reservasElemento.textContent = datos.total_reservas;
+        clientesElemento.textContent = datos.total_clientes;
+
+        mensaje.textContent = "";
+
+    } catch (error) {
+        console.error("Error al cargar el resumen:", error);
+
+        reservasElemento.textContent = "—";
+        clientesElemento.textContent = "—";
+
+        mensaje.textContent =
+            "No se pudieron cargar los datos. Verificá que el servidor Flask esté funcionando.";
     }
-});
+}
 
-
-// 2. Gráfico de reservas canceladas y no canceladas
-const grfCancelaciones =
-    document.getElementById("chart-cancelaciones");
-
-new Chart(grfCancelaciones, {
-    type: "doughnut",
-
-    data: {
-        labels: ["No canceladas", "Canceladas"],
-
-        datasets: [{
-            data: [70, 30],
-            backgroundColor: [
-                "#9bc9b0",
-                "#e8a6ad"
-            ],
-            borderWidth: 0
-        }]
-    },
-
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-
-        plugins: {
-            legend: {
-                position: "bottom"
-            }
-        }
-    }
-});
+cargarResumen();

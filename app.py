@@ -668,6 +668,75 @@ def listado_adr_alto():
     finally:
         conexion.close()
 
+
+@app.route("/listados/rango-fechas")
+def rango_fechas_listados():
+    conexion = conectar()
+
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("""
+                SELECT
+                    MIN(
+                        STR_TO_DATE(
+                            CONCAT(
+                                Anio_llegada, '-',
+                                Mes_llegada, '-',
+                                Dia_llegada
+                            ),
+                            '%Y-%M-%d'
+                        )
+                    ) AS fecha_minima,
+                    MAX(
+                        STR_TO_DATE(
+                            CONCAT(
+                                Anio_llegada, '-',
+                                Mes_llegada, '-',
+                                Dia_llegada
+                            ),
+                            '%Y-%M-%d'
+                        )
+                    ) AS fecha_maxima
+                FROM reserva
+            """)
+
+            datos = cursor.fetchone()
+
+        if not datos or not datos["fecha_minima"]:
+            return jsonify({
+                "fecha_minima": None,
+                "fecha_maxima": None
+            })
+
+        return jsonify({
+            "fecha_minima": datos["fecha_minima"].strftime("%Y-%m-%d"),
+            "fecha_maxima": datos["fecha_maxima"].strftime("%Y-%m-%d")
+        })
+
+    finally:
+        conexion.close()
+
+@app.route("/inicio/resumen")
+def inicio_resumen():
+    conexion = conectar()
+
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("SELECT COUNT(*) AS total FROM reserva")
+            total_reservas = cursor.fetchone()["total"]
+
+            cursor.execute("SELECT COUNT(*) AS total FROM cliente")
+            total_clientes = cursor.fetchone()["total"]
+
+        return jsonify({
+            "total_reservas": total_reservas,
+            "total_clientes": total_clientes
+        })
+
+    finally:
+        conexion.close()
+
+
 if __name__ == "__main__":
     app.run(debug=True)
 
